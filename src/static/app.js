@@ -20,15 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
         activityCard.className = "activity-card";
 
         const spotsLeft = details.max_participants - details.participants.length;
-        const participantsMarkup =
-          details.participants.length > 0
-            ? `<ul class="participants-list">${details.participants
-                .map(
-                  (participant) =>
-                    `<li class="participant-item"><span class="participant-email">${participant}</span><button type="button" class="participant-delete-btn" data-activity="${name}" data-email="${participant}" aria-label="Unregister ${participant}" title="Unregister participant">🗑️</button></li>`
-                )
-                .join("")}</ul>`
-            : '<p class="participants-empty">No participants yet.</p>';
 
         activityCard.innerHTML = `
           <h4>${name}</h4>
@@ -37,9 +28,41 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
           <div class="participants-section">
             <p class="participants-title">Participants</p>
-            ${participantsMarkup}
           </div>
         `;
+
+        const participantsSection = activityCard.querySelector(".participants-section");
+        if (details.participants.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+          details.participants.forEach((participant) => {
+            const li = document.createElement("li");
+            li.className = "participant-item";
+
+            const span = document.createElement("span");
+            span.className = "participant-email";
+            span.textContent = participant;
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "participant-delete-btn";
+            btn.dataset.activity = name;
+            btn.dataset.email = participant;
+            btn.setAttribute("aria-label", `Unregister ${participant}`);
+            btn.title = "Unregister participant";
+            btn.textContent = "🗑️";
+
+            li.appendChild(span);
+            li.appendChild(btn);
+            ul.appendChild(li);
+          });
+          participantsSection.appendChild(ul);
+        } else {
+          const p = document.createElement("p");
+          p.className = "participants-empty";
+          p.textContent = "No participants yet.";
+          participantsSection.appendChild(p);
+        }
 
         activitiesList.appendChild(activityCard);
 
